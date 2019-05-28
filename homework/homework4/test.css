@@ -1,0 +1,30 @@
+survey-description/* Start reset CSS */
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td{margin: 0;padding: 0;}
+
+.container{background-color: #FFF;font-size: 12px;line-height: 120%;color: #1d2d45;}
+.container .inner{width: 75%;text-align: center;border-collapse: separate;border-spacing: 1px;margin: 20px auto 40px auto;width: 75%;}
+
+td.survey-description {border-bottom: 2px solid #e33b3d;color: #666;text-align: center;height: 43px;overflow: hidden;background: url(logo-w-s.png) no-repeat 0 -10px;background-size: 165px auto;}
+td.survey-description h1{text-align:left;margin-left:190px;font-size:22px;font-family:"Microsoft Yahei";font-weight:normal;padding-bottom:10px;}
+.welcome-table td.survey-description p.surveydescription{height:0;}
+.survey-description p {font-size: 10px;}
+td.survey-welcome {text-align: left;padding: 30px 65px 15px 35px;}
+
+.surveytable{width: 100%;margin: 0 0 2px 0;border: 0 none;border-collapse: collapse;background-color: #fff;}
+
+.surveytable .left{text-align:left;}
+.surveytable .group-name{ font-size: 16px;font-family:"����";font-weight:bold;}
+
+.left{text-align:left;}
+.group-name{ font-size: 16px;font-family:"����";font-weight:bold;}
+
+.question_wrapper{width: 100%;margin: 0 auto 10px auto;border:1px solid #cce8ff;padding:1px;background-color: #FFFFFF;}
+.question_title{font-family: verdana;font-size: 12px;font-weight:bold;background-color: #EEF6FF;text-align: left;padding:6px 10px;}
+
+.answer{padding: 11px 24px 16px 37px;text-align: left;}
+.answer_list li{list-style-type: none;text-align: left;margin: 0% 0% 0.5em 0.5em;}
+.answer3_list li{padding: 0%;display: table-row; list-style-type: none;text-align: left;margin: 0% 0% 0.5em 0.5em;}
+.answer3_list li .label{ padding: 0.3em 1em 0% 0%;display: table-cell;vertical-align: baseline;}
+
+.remark{color: red;font-size: 9px;font-family: verdana;margin-right:5px;}
+.button-text{text-align:center;font-weight: 400;font-size: 12px;color: #000;padding: 0 5px;margin: 5px;border: 1px solid #cde7ff;}

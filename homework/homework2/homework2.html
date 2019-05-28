@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script language="javascript" src="jquery_002.js" sudy-wp-context="" sudy-wp-siteid="6"></script>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <title>45-於陆</title>
+
+    <style> 
+        a{ text-decoration:none} 
+    </style> 
+</head>
+
+<body>
+    <script>
+        // NavigationBar:导航
+        ;
+        (function ($) {
+            $.fn.sudyNav = function () {
+                var defaults = {
+                    vertical: {
+                        active: '0',
+                        col: '1'
+                    }, // 主菜单是否纵向,active 0否 1是  col,主菜单列数
+                    drop_v: 'down', // 设置子菜单垂直弹出方向，向上或向下,up or down
+                    drop_w: 'right',
+                    dir: "y", // 设置子菜单栏目排列方向，x 为横向，y为纵向
+                    dWidth: '0', // 设置子菜单位置是否以页面宽度参照，否则以主菜单容器宽度(当dir设置为x时有效，即对子菜单横向有效)
+                    opacity_main: '1',
+                    opacity_sub: '1'
+                };
+                return this.each(function () {
+                    var option = {};
+                    eval('option = ' + ($(this).attr("data-nav-config") || {}) + ';');
+                    var o = $.extend(true, {}, defaults, option);
+                    var c = $(this);
+                    var cW = (o.dWidth == '0') ? c.width() : $(document.body).width();
+                    var l = c.find(".nav-bar");
+                    var u = c.find("ul");
+                    var su = u.find("ul");
+                    var cl = c.children('.nav-bar');
+                    var cu = c.children('.nav-bar').children('ul');
+                    var isIE6 = !-[1,] && !window.XMLHttpRequest;
+                    if (o.vertical.active == '1') {
+                        c.css({ height: 'auto' }).children('.nav-bar').css({ display: "block", width: (100 / o.vertical.col) + '%', float: 'none' }).children('a').css({ display: "block", width: "auto" });
+                        if (o.vertical.col !== '1') {
+                            c.children(".nav-bar").css({ display: "inline-block", float: 'left' });
+                        }
+                        if (o.drop_v == 'up') {
+                            u.css({ bottom: '0px' });
+                        } else {
+                            u.css({ top: '0px' });
+                        }
+                        if (o.drop_w == 'left') {
+                            u.css({ right: "100%" });
+                        } else {
+                            u.css({ left: '100%' });
+                        }
+                    } else {
+                        if (o.drop_v == 'up') {
+                            su.css({ bottom: '0px' });
+                        } else {
+                            su.css({ top: '0px' });
+                        }
+                        if (o.drop_w == 'left') {
+                            su.css({ right: "100%" });
+                        } else {
+                            su.css({ left: '100%' });
+                        }
+                    }
+                    function setOpacity(e, a, w, h) {
+                        var mark = e.children('i');
+                        if (a !== '-1' && a !== -1) mark.css({ opacity: a });
+                        if (isIE6) {
+                            mark.css({ width: w + 'px', height: h + 'px' });
+                        }
+                    }
+                    $.each(cl, function () {
+                        var clW = $(this).width();
+                        var clH = $(this).height();
+                        setOpacity($(this), o.opacity_main, clW, clH);
+                    });
+                    $.each(u, function () {
+                        var sl = $(this).children(".nav-bar"), suW = 0, suH = 0, sW = 0, sH = 0;
+                        $.each(sl, function () {
+                            var slW = $(this).outerWidth(), slH = $(this).outerHeight();
+                            suW = suW < slW ? slW : suW;
+                            suH += slH;
+                            sW += slW;
+                            sH = sH < slH ? slH : sH;
+                            setOpacity($(this), o.opacity_sub, slW, slH);
+                        });
+                        if (o.dir == 'x') {
+                            var pX = $(this).parent('.nav-bar').offset().left + sW;
+                            var cX = (o.dWidth == '0') ? (c.offset().left + cW) : cW;
+                            var dX = cX - pX;
+                            var left = dX < 0 ? dX : 0;
+                            $(this).css({ width: sW + 'px', height: sH + 'px', left: left + 'px' });
+                            var pH = $(this).parent('.nav-bar').outerHeight();
+                            if (o.drop_v == 'up') {
+                                $(this).css({ bottom: pH + 'px' });
+                            } else {
+                                $(this).css({ top: pH + 'px' });
+                            }
+                        } else {
+                            $(this).css({ width: suW + 'px', height: suH + 'px' });
+                            sl.css({ display: "block", width: "100%" }).children('a').css({ display: "block", width: "auto" });
+                            setOpacity(sl, o.opacity_sub, suW, sH);
+                        }
+                    });
+                    if (o.dir !== 'x' && o.vertical.active !== '1') {
+                        $.each(cu, function () {
+                            var pH = $(this).parent('.nav-bar').outerHeight();
+                            if (o.drop_v == 'up') {
+                                $(this).css({ bottom: pH + 'px' });
+                            } else {
+                                $(this).css({ top: pH + 'px' });
+                            }
+                            if (o.drop_w == 'left') {
+                                $(this).css({ right: "0" });
+                            } else {
+                                $(this).css({ left: '0' });
+                            }
+                        });
+                    }
+                    l.hover(function () {
+                        $(this).addClass("on").siblings().removeClass("on");
+                        $(this).children('a').addClass('parent');
+                        $(this).children("ul").css("visibility", "visible").end().siblings().find("ul").css("visibility", "hidden");
+                    }, function () {
+                        $(this).removeClass("on");
+                        $(this).children('a').removeClass('parent');
+                        $(this).find("ul").css("visibility", "hidden");
+                    });
+                });
+            };
+        })(jQuery);
+
+        $(function () {
+            $(".NavigationBar").sudyNav();
+        });
+    </script>
+    <div class="navigation" id = "naver">
+        <div class="inner">
+            <ul class="NavigationBar"
+                data-nav-config="{drop_v: 'down', drop_w: 'right', dir: 'y', opacity_main: '-1', opacity_sub: '-1', dWidth: '0'}">
+                <li class="nav-bar i1">
+                    <a href="http://www.zuel.edu.cn/" title="首 页">
+                        <span class="navigation-name">首 页</span></a><i class="mark"></i>
+                </li>
+                <li class="nav-bar i2">
+                    <a href="http://www.zuel.edu.cn/about/" title="学校概况">
+                        <span class="navigation-name">学校概况</span></a><i class="mark"></i>
+                    <ul class="level2-bar"
+                        style="width: 175px; height: 280px; top: 41px; left: 0px; visibility: hidden;">
+
+                        <li class="level2-item i1" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/about/" title="学校简介"><span
+                                    class="level2-bar-name">学校简介</span></a><i class="mark"></i>
+                        </li>
+
+                        <li class="level2-item i2" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/history/" title="历史沿革"><span
+                                    class="level2-bar-name">历史沿革</span></a><i class="mark"></i>
+                        </li>
+
+                        <li class="level2-item i3" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/leaders2/" title="历任领导"><span
+                                    class="level2-bar-name">历任领导</span></a><i class="mark"></i>
+                        </li>
+
+                        <li class="level2-item i4" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/leaders/" title="现任领导"><span
+                                    class="level2-bar-name">现任领导</span></a><i class="mark"></i>
+                        </li>
+
+                        <li class="level2-item i5" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/departments/" title="管理机构"><span
+                                    class="level2-bar-name">管理机构</span></a><i class="mark"></i>
+                        </li>
+
+                        <li class="level2-item i6" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/schools/" title="院系设置"><span
+                                    class="level2-bar-name">院系设置</span></a><i class="mark"></i>
+                        </li>
+
+                        <li class="level2-item i7" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/motto_ui/" title="校训校徽"><span
+                                    class="level2-bar-name">校训校徽</span></a><i class="mark"></i>
+                        </li>
+
+                        <li class="level2-item i8" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/story/" title="中南映像"><span
+                                    class="level2-bar-name">中南映像</span></a><i class="mark"></i>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-bar i3">
+                    <a href="http://www.zuel.edu.cn/departments/" title="管理机构">
+                        <span class="navigation-name">管理机构</span></a><i class="mark"></i>
+                </li>
+                <li class="nav-bar i4">
+                    <a href="http://www.zuel.edu.cn/schools/" title="院系设置">
+                        <span class="navigation-name">院系设置</span></a><i class="mark"></i>
+                </li>
+                <li class="nav-bar i5">
+                    <a href="http://www.zuel.edu.cn/teachers/" title="师资队伍">
+                        <span class="navigation-name">师资队伍</span></a><i class="mark"></i>
+
+                    <ul class="level2-bar"
+                        style="width: 175px; height: 560px; top: 41px; left: 0px; visibility: hidden;">
+
+                        <li class="level2-item i1" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers/" title="师资概况" target="_self"
+                                style="display: block; width: auto;" class=""><span
+                                    class="level2-bar-name">师资概况</span></a><i class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i2" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/wrjh/list.htm" title="万人计划" target="_self"
+                                style="display: block; width: auto;"><span class="level2-bar-name">万人计划</span></a><i
+                                class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i3" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_cjxz/list.htm" title="长江学者" target="_self"
+                                style="display: block; width: auto;"><span class="level2-bar-name">长江学者</span></a><i
+                                class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i4" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/whmjjwsgypwrc/list.htm" title="文化名家暨“四个一批”人才" target="_self"
+                                style="display: block; width: auto;"><span
+                                    class="level2-bar-name">文化名家暨“四个一批”人...</span></a><i class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i5" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_gjbqw/" title="百千万人才工程国家级人选" target="_self"
+                                style="display: block; width: auto;"><span
+                                    class="level2-bar-name">百千万人才工程国家级人选</span></a><i class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i6" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_gwyjt/" title="国务院政府特殊津贴" target="_self"
+                                style="display: block; width: auto;"><span
+                                    class="level2-bar-name">国务院政府特殊津贴</span></a><i class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i7" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_qgyxjygzz/" title="全国优秀教育工作者等" target="_self"
+                                style="display: block; width: auto;"><span
+                                    class="level2-bar-name">全国优秀教育工作者等</span></a><i class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i8" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_jybjh/" title="教育部青年教师资助计划、新世纪优秀人才支持计划"
+                                target="_self" style="display: block; width: auto;"><span
+                                    class="level2-bar-name">教育部青年教师资助计划、...</span></a><i class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i9" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_ctxz/" title="楚天学者" target="_self"
+                                style="display: block; width: auto;"><span class="level2-bar-name">楚天学者</span></a><i
+                                class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i10" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_hbms/" title="湖北名师" target="_self"
+                                style="display: block; width: auto;"><span class="level2-bar-name">湖北名师</span></a><i
+                                class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i11" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_hbs111/" title="湖北省跨世纪111人才工程" target="_self"
+                                style="display: block; width: auto;"><span
+                                    class="level2-bar-name">湖北省跨世纪111人才工程</span></a><i class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i12" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_hbxsjgcc/" title="湖北新世纪高层次人才工程" target="_self"
+                                style="display: block; width: auto;"><span
+                                    class="level2-bar-name">湖北新世纪高层次人才工程</span></a><i class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i13" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_hbsjt/" title="湖北省政府专项津贴" target="_self"
+                                style="display: block; width: auto;"><span
+                                    class="level2-bar-name">湖北省政府专项津贴</span></a><i class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i14" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_hbstcgx/" title="湖北有突出贡献中青年专家" target="_self"
+                                style="display: block; width: auto;"><span
+                                    class="level2-bar-name">湖北有突出贡献中青年专家</span></a><i class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i15" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_wlxz/" title="文澜学者" target="_self"
+                                style="display: block; width: auto;"><span class="level2-bar-name">文澜学者</span></a><i
+                                class="mark"></i>
+
+                        </li>
+
+                        <li class="level2-item i16" style="display: block; width: 100%;">
+                            <a href="http://www.zuel.edu.cn/teachers_ejjs/" title="二级教授" target="_self"
+                                style="display: block; width: auto;"><span class="level2-bar-name">二级教授</span></a><i
+                                class="mark"></i>
+
+                        </li>
+                </li>
+            </ul>
+            <li class="nav-bar i6">
+                <a href="http://www.zuel.edu.cn/teaching_learning/" title="人才培养">
+                    <span class="navigation-name">人才培养</span></a><i class="mark"></i>
+
+                <ul class="level2-bar" style="width: 175px; height: 245px; top: 41px; left: 0px; visibility: hidden;">
+
+                    <li class="level2-item i1" style="display: block; width: 100%;">
+                        <a href="http://jwc.zuel.edu.cn/" title="本科教育" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">本科教育</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i2 " style="display: block; width: 100%;">
+                        <a href="http://yjsy.zuel.edu.cn/" title="研究生教育" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">研究生教育</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i3 " style="display: block; width: 100%;">
+                        <a href="http://mba.zuel.edu.cn/" title="MBA教育" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">MBA教育</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i4 " style="display: block; width: 100%;">
+                        <a href="http://sce.zuel.edu.cn/" title="继续教育" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">继续教育</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i5 " style="display: block; width: 100%;">
+                        <a href="http://xszz.zuel.edu.cn/" title="资助中心" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">资助中心</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i6" style="display: block; width: 100%;">
+                        <a href="http://www.zuel.edu.cn/reward/" title="学校奖助学金" target="_self"
+                            style="display: block; width: auto;"><span class="level2-bar-name">学校奖助学金</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i7" style="display: block; width: 100%;">
+                        <a href="http://www.zuel.edu.cn/reward2/" title="学院奖助学金" target="_self"
+                            style="display: block; width: auto;"><span class="level2-bar-name">学院奖助学金</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                </ul>
+            </li>
+            <li class="nav-bar i7">
+                <a href="http://www.zuel.edu.cn/recruit_jobs/" title="招生就业">
+                    <span class="navigation-name">招生就业</span></a><i class="mark"></i>
+                <ul class="level2-bar" style="width: 175px; height: 245px; top: 41px; left: 0px; visibility: hidden;">
+
+                    <li class="level2-item i1" style="display: block; width: 100%;">
+                        <a href="http://www.zuel.edu.cn/recruit_jobs/" title="招生就业" target="_self"
+                            style="display: block; width: auto;" class=""><span
+                                class="level2-bar-name">招生就业</span></a><i class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i2" style="display: block; width: 100%;">
+                        <a href="http://jyzx.zuel.edu.cn/" title="就业指导中心" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">就业指导中心</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i3" style="display: block; width: 100%;">
+                        <a href="http://xgb.zuel.edu.cn/" title="学生工作部" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">学生工作部</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i4" style="display: block; width: 100%;">
+                        <a href="http://yjsy.zuel.edu.cn/" title="研究生院" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">研究生院</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i5" style="display: block; width: 100%;">
+                        <a href="http://ies.zuel.edu.cn/" title="国际教育学院" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">国际教育学院</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i6" style="display: block; width: 100%;">
+                        <a href="http://jwc.zuel.edu.cn/" title="教 务 部" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">教 务
+                                部</span></a><i class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i7" style="display: block; width: 100%;">
+                        <a href="http://sce.zuel.edu.cn/" title="继续教育" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">继续教育</span></a><i
+                            class="mark"></i>
+
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-bar i8">
+                <a href="http://www.zuel.edu.cn/research/" title="学术研究">
+                    <span class="navigation-name">学术研究</span></a><i class="mark"></i>
+                <ul class="level2-bar" style="width: 175px; height: 210px; top: 41px; left: 0px; visibility: hidden;">
+
+                    <li class="level2-item i1" style="display: block; width: 100%;">
+                        <a href="http://www.zuel.edu.cn/subject/" title="学科建设" target="_self"
+                            style="display: block; width: auto;" class=""><span
+                                class="level2-bar-name">学科建设</span></a><i class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i2" style="display: block; width: 100%;">
+                        <a href="http://www.zuel.edu.cn/organization/" title="科研机构" target="_self"
+                            style="display: block; width: auto;" class=""><span
+                                class="level2-bar-name">科研机构</span></a><i class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i3" style="display: block; width: 100%;">
+                        <a href="http://science.zuel.edu.cn/" title="科研管理" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">科研管理</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i4" style="display: block; width: 100%;">
+                        <a href="http://gjc.zuel.edu.cn/" title="国际交流" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">国际交流</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i5" style="display: block; width: 100%;">
+                        <a href="http://xuebao.zuel.edu.cn/" title="学　　报" target="_self"
+                            style="display: block; width: auto;" class=""><span
+                                class="level2-bar-name">学　　报</span></a><i class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i6" style="display: block; width: 100%;">
+                        <a href="http://fsyj.zuel.edu.cn/" title="法商研究" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">法商研究</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                </ul>
+            </li>
+            <li class="nav-bar i9">
+                <a href="http://www.zuel.edu.cn/exchange/" title="交流服务">
+                    <span class="navigation-name">交流服务</span></a><i class="mark"></i>
+                <ul class="level2-bar" style="width: 175px; height: 140px; top: 41px; left: 0px; visibility: hidden;">
+
+                    <li class="level2-item i1" style="display: block; width: 100%;">
+                        <a href="http://gjc.zuel.edu.cn/" title="国际交流" target="_blank"
+                            style="display: block; width: auto;" class=""><span
+                                class="level2-bar-name">国际交流</span></a><i class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i2" style="display: block; width: 100%;">
+                        <a href="http://www.zuel.edu.cn/exchange/" title="研究咨询" target="_self"
+                            style="display: block; width: auto;"><span class="level2-bar-name">研究咨询</span></a><i
+                            class="mark"></i>
+
+                    </li>
+
+                    <li class="level2-item i3" style="display: block; width: 100%;">
+                        <a href="http://www.zuel.edu.cn/services/" title="服务指南" target="_self"
+                            style="display: block; width: auto;"><span class="level2-bar-name">服务指南</span></a><i
+                            class="mark"></i>
+
+                    </li>
+                    <li class="level2-item i4" style="display: block; width: 100%;">
+                        <a href="http://gjc.zuel.edu.cn/5673/list.htm" title="出访公示" target="_blank"
+                            style="display: block; width: auto;"><span class="level2-bar-name">出访公示</span></a><i
+                            class="mark"></i>
+
+                    </li>
+                </ul>
+            </li>
+            </ul>
+
+        </div>
+    </div>
+    </div>
+
+    <div class="wrapper" id="container-1">
+        <div class="inner">
+            <div class="cont-1">
+                <div class="cont-1-b">
+                    <div class="cont-1-b-1">
+                        <div class="post">
+                            <div class="tt">
+                                <h3 class="tit">
+                                    <a href="http://wellan.zuel.edu.cn/" target="_blank" textvalue="文澜新闻"><span
+                                            class="title">文澜新闻</span></a>
+                                </h3>
+                            </div>
+                            <div class="con" frag="面板6">
+                                <div frag="窗口6">
+                                    <div id="wp_news_w6">
+
+                                        <ul class="news_list zdy-1">
+
+                                            <li class="news n1 clearfix">
+                                                <div class="slt">
+                                                    <a href="http://wellan.zuel.edu.cn/2019/0326/c1668a212539/page.htm"
+                                                        target="_blank" title="校友总会公众号登上多项百强榜单前十名"><img
+                                                            src="images/wenlan.jpg"
+                                                            width="285" height="191"></a>
+                                                </div>
+                                                <div class="zdy-1-r">
+                                                    <div class="bt">
+                                                        <a href="http://wellan.zuel.edu.cn/2019/0326/c1668a212539/page.htm"
+                                                            target="_blank"
+                                                            title="校友总会公众号登上多项百强榜单前十名">校友总会公众号登上多项百强榜单前十名</a>
+                                                    </div>
+                                                    <div class="sj">
+                                                        2019-03-26
+                                                    </div>
+                                                    <div class="jianj">
+                                                        <a href="http://wellan.zuel.edu.cn/2019/0326/c1668a212539/page.htm"
+                                                            target="_blank"
+                                                            title="校友总会公众号登上多项百强榜单前十名">新闻网讯（记者徐剑飞）近日，致力于中国校友工作研究的“校友工作研究”公众号发布了“2018年度校友会微信公众号百强榜单”，该榜单基于248个高校校友会公众号的样本库，结合年度的文章阅读总量、点赞总量、发布文章总量、文章平均阅读...</a>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cont-1-b-2">
+                        <div class="post">
+                            <div class="tt">
+                                <div class="more_btn" type="更多">
+                                    <a href="http://wellan.zuel.edu.cn/" target="_blank"
+                                        textvalue="更多&gt;&gt;">更多&gt;&gt;</a>
+                                </div>
+                            </div>
+                            <div class="con" frag="面板7">
+                                <div frag="窗口7">
+                                    <div id="wp_news_w7">
+
+                                        <ul class="news_list zdy-2">
+                                            <li class="news n1 clearfix item-1">
+                                                <div class="sj">
+                                                    <div class="sj-y">
+                                                        2019
+                                                    </div>
+                                                    <div class="sj-m-d">
+                                                        03-26
+                                                    </div>
+                                                </div>
+                                                <div class="bt">
+                                                    <a href="http://wellan.zuel.edu.cn/2019/0326/c1668a212539/page.htm"
+                                                        target="_blank"
+                                                        title="校友总会公众号登上多项百强榜单前十名">校友总会公众号登上多项百强榜单前十名</a>
+                                                </div>
+                                            </li>
+                                            <li class="news n2 clearfix item-2" style="display: list-item;">
+                                                <div class="sj">
+                                                    <div class="sj-y">
+                                                        2019
+                                                    </div>
+                                                    <div class="sj-m-d">
+                                                        04-01
+                                                    </div>
+                                                </div>
+                                                <div class="bt">
+                                                    <a href="http://www.zuel.edu.cn/_redirect?siteId=6&amp;columnId=1234&amp;articleId=212898"
+                                                        target="_blank" title="张忠民入选“万人计划”拔尖人才名单">张忠民入选“万人计划”拔尖人才名单</a>
+                                                </div>
+                                            </li>
+                                            <li class="news n3 clearfix item-3" style="display: list-item;">
+                                                <div class="sj">
+                                                    <div class="sj-y">
+                                                        2019
+                                                    </div>
+                                                    <div class="sj-m-d">
+                                                        04-01
+                                                    </div>
+                                                </div>
+                                                <div class="bt">
+                                                    <a href="http://www.zuel.edu.cn/_redirect?siteId=6&amp;columnId=1234&amp;articleId=212897"
+                                                        target="_blank"
+                                                        title="学校在湖南两所重点中学设优质生源基地">学校在湖南两所重点中学设优质生源基地</a>
+                                                </div>
+                                            </li>
+                                            <li class="news n4 clearfix item-4" style="display: list-item;">
+                                                <div class="sj">
+                                                    <div class="sj-y">
+                                                        2019
+                                                    </div>
+                                                    <div class="sj-m-d">
+                                                        04-01
+                                                    </div>
+                                                </div>
+                                                <div class="bt">
+                                                    <a href="http://www.zuel.edu.cn/_redirect?siteId=6&amp;columnId=1234&amp;articleId=212896"
+                                                        target="_blank"
+                                                        title="学校新增14个教育部产学合作协同育人项目">学校新增14个教育部产学合作协同育人项目</a>
+                                                </div>
+                                            </li>
+                                            <li class="news n5 clearfix item-5" style="display: list-item;">
+                                                <div class="sj">
+                                                    <div class="sj-y">
+                                                        2019
+                                                    </div>
+                                                    <div class="sj-m-d">
+                                                        04-01
+                                                    </div>
+                                                </div>
+                                                <div class="bt">
+                                                    <a href="http://www.zuel.edu.cn/_redirect?siteId=6&amp;columnId=1234&amp;articleId=212825"
+                                                        target="_blank"
+                                                        title="学校召开2019年全面从严治党工作会议">学校召开2019年全面从严治党工作会议</a>
+                                                </div>
+                                            </li>
+                                            <li class="news n6 clearfix item-6" style="display: list-item;">
+                                                <div class="sj">
+                                                    <div class="sj-y">
+                                                        2019
+                                                    </div>
+                                                    <div class="sj-m-d">
+                                                        03-26
+                                                    </div>
+                                                </div>
+                                                <div class="bt">
+                                                    <a href="http://www.zuel.edu.cn/_redirect?siteId=6&amp;columnId=1234&amp;articleId=212519"
+                                                        target="_blank"
+                                                        title="教育部人文社科研究一般项目我校24项获准">教育部人文社科研究一般项目我校24项获准</a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fenge"></div>
+    <div class="wrapper" id="container">
+        <div class="inner">
+            <div class="body1">
+                <div id="windows1">
+                    <ul class="newslist">
+                        <li class="news n1 clearfix">
+                            <div class="news1-title">
+                                <div class="image1">
+                                    <a href="http://xwcb.zuel.edu.cn/2019/0329/c6952a212724/page.htm" target="_blank"
+                                        title="宋连谊：留学英伦；东西方的碰撞与融合">
+                                        <img src="images/images1.jpg" width="101" height="74"></a>
+                                </div>
+                                <div class="news1-title-t">
+                                    <div class="news1-title-tt">
+                                        <a href="http://xwcb.zuel.edu.cn/2019/0329/c6952a212724/page.htm"
+                                            target="_blank" title="宋连谊：留学英伦；东西方的碰撞与融合">宋连谊：留学英伦；东西方的碰撞与融合</a>
+                                    </div>
+                                    <div class="sj1">
+                                        2019-03-29
+                                    </div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="news1-content">
+                                <a href="http://xwcb.zuel.edu.cn/2019/0329/c6952a212724/page.htm" target="_blank"
+                                    title="宋连谊：留学英伦；东西方的碰撞与融合">
+                                    <p>主题：留学英伦；东西方的碰撞与融合</p>
+                                    <p>主讲：宋连谊 博士</p>
+                                    <p>&nbsp; 伦敦大学亚非学院东亚语言文化系主任教师,&nbsp;硕博士导师</p>
+                                    <p>时间：2019年4月2日晚19:30--21:00</p>
+                                    <p>地点：新闻学院5楼会议室</p>
+                                    <p>时间：2019年4月3日下午16:00--17:30</p>
+                                    <p>地点：文澜楼301教室</p>
+                                    <p><br></p>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="body2">
+
+                <div class="body2-newslist">
+                    <div id="windows2">
+                        <ul class="newslist">
+                            <li class="news n1 clearfix">
+                                <div class="sj">
+                                    <div class="year">
+                                        2019
+                                    </div>
+                                    <div class="md">
+                                        04-01
+                                    </div>
+                                </div>
+                                <div class="news2-content">
+                                    <a href="/_redirect?siteId=6&amp;columnId=1235&amp;articleId=212875" target="_blank"
+                                        title="Sergey Tyulenev：Translation and Compromise">Sergey Tyulenev：Translation
+                                        and
+                                        Compromise</a>
+                                </div>
+                            </li>
+                            <li class="news n2 clearfix">
+                                <div class="sj">
+                                    <div class="year">
+                                        2019
+                                    </div>
+                                    <div class="md">
+                                        03-14
+                                    </div>
+                                </div>
+                                <div class="news2-content">
+                                    <a href="/_redirect?siteId=6&amp;columnId=1235&amp;articleId=211720" target="_blank"
+                                        title="首届华中地区计量经济学学术研讨会暨系列学术讲座预告">首届华中地区计量经济学学术研讨会暨系列学术讲座预告</a>
+                                </div>
+                            </li>
+                            <li class="news n3 clearfix">
+                                <div class="sj">
+                                    <div class="year">
+                                        2019
+                                    </div>
+                                    <div class="md">
+                                        03-14
+                                    </div>
+                                </div>
+                                <div class="news2-content">
+                                    <a href="/_redirect?siteId=6&amp;columnId=1235&amp;articleId=211689" target="_blank"
+                                        title="俞旸：微表情识别技术在侦查中的发展与应用">俞旸：微表情识别技术在侦查中的发展与应用</a>
+                                </div>
+                            </li>
+                            <li class="news n4 clearfix">
+                                <div class="sj">
+                                    <div class="year">
+                                        2019
+                                    </div>
+                                    <div class="md">
+                                        03-04
+                                    </div>
+                                </div>
+                                <div class="news2-content">
+                                    <a href="http://gsxy.zuel.edu.cn/2019/0301/c4110a211081/page.htm?tdsourcetag=s_pcqq_aiomsg"
+                                        target="_blank"
+                                        title="夏军：违规与及时的公开信息披露：职业守门人的调节作用">夏军：违规与及时的公开信息披露：职业守门人的调节作用</a>
+                                </div>
+                            </li>
+                            <li class="news n5 clearfix">
+                                <div class="sj">
+                                    <div class="year">
+                                        2018
+                                    </div>
+                                    <div class="md">
+                                        12-27
+                                    </div>
+                                </div>
+                                <div class="news2-content">
+                                    <a href="/2018/1227/c1235a207629/page.htm" target="_blank"
+                                        title="新时代大学生讲堂：习近平新时代中国特色社会主义思想微课竞赛">新时代大学生讲堂：习近平新时代中国特色社会主义思想微课竞赛</a>
+                                </div>
+                            </li>
+                            <li class="news n6 clearfix">
+                                <div class="sj">
+                                    <div class="year">
+                                        2018
+                                    </div>
+                                    <div class="md">
+                                        12-04
+                                    </div>
+                                </div>
+                                <div class="news2-content">
+                                    <a href="http://law.zuel.edu.cn/2018/1204/c3753a205568/page.htm" target="_blank"
+                                        title="赵晓耕： 中国地方政权的刑罚 ">赵晓耕： 中国地方政权的刑罚 </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="more">
+                        <a class="more-link" href="/lecture/list.htm" title="显示更多">
+                            <span class="moretext">
+                                <font style="color: #9d7a23;font-family: 宋体;font-size: 10;">更多&gt;&gt;</font>
+                            </span></a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="body3">
+                <div id="windows3">
+                    <ul class="news3-ul">
+                        <li class="news3-li">
+                            <div class="news3-title">
+                                <div class="news3-title-images">
+                                    <a href="http://www.zuel.edu.cn/2019/0313/c1236a211658/page.htm" target="_blank"
+                                        title="中南大专家学者解读两会热点">
+                                        <img src="images/images2.jpg" width="101" height="74"></a>
+                                </div>
+                                <div class="news-title-bt">
+                                    <div class="news3-title-bt-content">
+                                        <a href="http://www.zuel.edu.cn/2019/0313/c1236a211658/page.htm" target="_blank"
+                                            title="中南大专家学者解读两会热点">中南大专家学者解读两会热点</a>
+                                    </div>
+                                    <div class="sj1">
+                                        2019-03-13
+                                    </div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="news3-content">
+                                <a href="http://www.zuel.edu.cn/2019/0313/c1236a211658/page.htm" target="_blank"
+                                    title="中南大专家学者解读两会热点">
+                                    时值三月，全国进入两会时间。2019年3月3日，全国政协十三届二次会议在北京开幕。3月5日，十三届全国人大二次会议也在北京举行。
+                                    中南大专家学者紧扣“两会”脉搏，热议两会热点及政府工作报告提出的新举措，并结合自己的研究领域为国家改革与发展建言。</a>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="more">
+                        <a class="more-link" href="/lecture/list.htm" title="显示更多">
+                            <span class="moretext">
+                                <font style="color: #9d7a23;font-family: 宋体;font-size: 10;">更多&gt;&gt;</font>
+                            </span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
